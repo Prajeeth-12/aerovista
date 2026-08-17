@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AeroVista — Solar & Scenic Flight Seat Planner</title>
+  
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Custom Obsidian Styles -->
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- Top Header Navigation -->
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-icon">✈️</div>
+      <div>
+        <div class="brand-title">AeroVista</div>
+        <div class="brand-sub">Solar Flight Seat Optimizer</div>
+      </div>
+      <span class="brand-badge">SkyView AI v2.5</span>
+    </div>
+    
+    <div class="header-actions">
+      <div class="utc-clock">
+        <span class="utc-dot"></span>
+        <span id="utc-time-display">00:00:00 UTC</span>
+      </div>
+      <button class="btn-secondary" id="btn-journey-doc">
+        <span>📜</span> Journey Log
+      </button>
+    </div>
+  </header>
+
+  <!-- Flight Controller Top Glass Bar -->
+  <section class="controller-wrapper">
+    <div class="glass-card controller-card">
+      
+      <!-- Flight Inputs Row -->
+      <div class="controller-grid">
+        
+        <div class="form-group">
+          <label class="form-label">Origin Airport</label>
+          <input type="text" id="origin-input" class="form-control" placeholder="e.g. ZRH" value="ZRH - Zurich Airport" required />
+          <div id="origin-dropdown" class="autocomplete-dropdown"></div>
+        </div>
+
+        <button type="button" class="btn-swap" id="btn-swap-airports" title="Swap Origin & Destination">⇄</button>
+
+        <div class="form-group">
+          <label class="form-label">Destination Airport</label>
+          <input type="text" id="dest-input" class="form-control" placeholder="e.g. FCO" value="FCO - Rome Fiumicino" required />
+          <div id="dest-dropdown" class="autocomplete-dropdown"></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Departure Date</label>
+          <input type="date" id="dep-date" class="form-control" value="2026-08-17" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Dep Time (UTC)</label>
+          <input type="time" id="dep-time" class="form-control" value="17:30" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Duration (Hrs)</label>
+          <input type="number" id="flight-duration" class="form-control" min="0.5" max="20" step="0.5" value="2.0" required />
+        </div>
+
+      </div>
+
+      <!-- Presets & Preferences Bar -->
+      <div class="controller-bottom-row">
+        
+        <!-- Scenic Presets Carousel -->
+        <div class="presets-section">
+          <span class="preset-label">SCENIC PRESETS:</span>
+          <div id="presets-container" class="presets-scroll">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Preferences Buttons -->
+        <div class="pref-section">
+          <span class="preset-label">VIEW PREFERENCE:</span>
+          <div class="pref-btn-group">
+            <button class="pref-btn active" data-pref="sunset" title="Golden Hour & Sunset Views">
+              <span>🌅 Sunset</span>
+            </button>
+            <button class="pref-btn" data-pref="sunrise" title="Sunrise & Dawn Light">
+              <span>🌄 Sunrise</span>
+            </button>
+            <button class="pref-btn" data-pref="daylight" title="Daylight & Mountains">
+              <span>⛰️ Alps / Coast</span>
+            </button>
+            <button class="pref-btn" data-pref="shade" title="Shade & No Window Glare">
+              <span>🕶️ Cool Shade</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Main Dashboard 2-Column Grid -->
+  <main class="dashboard-grid">
+
+    <!-- Column 1: Interactive Map & Flight Progress Stage (60% Width) -->
+    <section class="stage-panel">
+      <div class="glass-card map-stage-card">
+        
+        <div class="stage-header">
+          <div class="stage-title">
+            <span class="pulse-icon">🗺️</span>
+            <span>Interactive Great Circle Route & Solar Position Map</span>
+          </div>
+          <div class="stage-status" id="scrubber-time-label">
+            17:30 UTC — Flight Start
+          </div>
+        </div>
+
+        <!-- Leaflet Map Container -->
+        <div id="map"></div>
+
+        <!-- Flight Progress Scrubber Bar -->
+        <div class="scrubber-card">
+          <div class="scrubber-controls">
+            <button class="btn-play" id="btn-play-simulation">▶ Play Flight</button>
+            <input type="range" id="time-scrubber" class="scrubber-slider" min="0" max="100" value="0" />
+          </div>
+
+          <div class="scrubber-stats">
+            <span id="waypoint-coord">Position: Lat 47.46° N, Lng 8.56° E | Heading: 168°</span>
+            <span id="waypoint-sun" class="sun-stat-badge">Sun Elevation: +12.4° (Golden Hour) — Sun on LEFT window</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Column 2: Recommendation & 2D Seat Inspector Panel (40% Width) -->
+    <aside class="inspector-panel">
+      
+      <!-- Dynamic Seat Recommendation Card -->
+      <section class="recommendation-card" id="recommendation-banner">
+        <div class="rec-header">
+          <span class="rec-badge left" id="rec-badge">LEFT SIDE (PORT)</span>
+          <span class="rec-route-pill" id="rec-route-tag">ZRH ➔ FCO</span>
+        </div>
+        <h3 class="rec-title" id="rec-title">Choose LEFT Window (Seats A/B/C)</h3>
+        <p class="rec-summary" id="rec-summary">
+          The sun will set on your left side as you fly south over the Swiss Alps into Rome. Enjoy golden hour mountain views!
+        </p>
+
+        <div class="score-bars">
+          <div class="score-row">
+            <span class="score-label">Left Window (A/B)</span>
+            <div class="score-track">
+              <div class="score-fill left" id="score-left-bar" style="width: 95%;"></div>
+            </div>
+            <span class="score-val" id="score-left-val" style="color:var(--emerald-accent);">95%</span>
+          </div>
+
+          <div class="score-row">
+            <span class="score-label">Right Window (E/F)</span>
+            <div class="score-track">
+              <div class="score-fill right" id="score-right-bar" style="width: 25%;"></div>
+            </div>
+            <span class="score-val" id="score-right-val" style="color:var(--secondary-accent);">25%</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Inspector Tabs (Cabin Seat Blueprint vs Flight View Timeline) -->
+      <div class="glass-card inspector-tabs-card">
+        
+        <div class="tab-nav">
+          <button class="tab-btn active" data-tab="tab-seats">
+            <span>🪑</span> 2D Aircraft Cabin
+          </button>
+          <button class="tab-btn" data-tab="tab-timeline">
+            <span>⏱️</span> Flight View Timeline
+          </button>
+        </div>
+
+        <!-- Tab 1: 2D Aircraft Cabin Layout -->
+        <div class="tab-content active" id="tab-seats">
+          <div class="cabin-container">
+            <div class="aircraft-hull">
+              <div class="cockpit-icon">▲ COCKPIT / FRONT ▲</div>
+              <div class="cabin-grid" id="cabin-grid">
+                <!-- Rendered by JS -->
+              </div>
+            </div>
+
+            <div class="seat-legend">
+              <div class="legend-item">
+                <div class="legend-dot" style="background:var(--emerald-accent);"></div>
+                <span>Best View (90%+)</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-dot" style="background:var(--secondary-accent);"></div>
+                <span>Good View (70-89%)</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-dot" style="background:var(--gold-accent);"></div>
+                <span>Direct Glare</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-dot" style="background:rgba(255,255,255,0.15);"></div>
+                <span>Standard</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Flight View Timeline -->
+        <div class="tab-content" id="tab-timeline">
+          <div class="timeline-container" id="timeline-container">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+      </div>
+
+    </aside>
+
+  </main>
+
+  <!-- Window View Canvas Simulator Modal -->
+  <div class="modal-overlay" id="window-modal">
+    <div class="modal-content">
+      <button class="modal-close" id="close-window-modal">&times;</button>
+      <h2 class="section-title" id="modal-seat-title">Window View Preview — Seat 12A (Left Window)</h2>
+      <p style="font-size:0.85rem; color:var(--text-muted);" id="modal-seat-desc">
+        Simulated passenger window view over Swiss Alps during flight.
+      </p>
+
+      <canvas id="window-canvas" width="640" height="280"></canvas>
+
+      <div class="modal-stats-bar">
+        <div>
+          <span class="modal-stat-label">RECOMMENDED SIDE</span>
+          <strong style="color:var(--emerald-accent);" id="modal-side-verdict">LEFT PORT WINDOW</strong>
+        </div>
+        <div>
+          <span class="modal-stat-label">SUN ELEVATION</span>
+          <strong style="color:var(--gold-accent);" id="modal-sun-elevation">+4.2° (Golden Hour)</strong>
+        </div>
+        <div>
+          <span class="modal-stat-label">VIEW RATING</span>
+          <strong style="color:var(--emerald-accent);" id="modal-rating-score">98 / 100</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Journey Document Modal -->
+  <div class="modal-overlay" id="journey-modal">
+    <div class="modal-content" style="max-width:850px;">
+      <button class="modal-close" id="close-journey-modal">&times;</button>
+      
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem;">
+        <h2 class="section-title">📜 AeroVista Journey Document & LLM Log</h2>
+        <div style="display:flex; gap:10px;">
+          <button class="btn-secondary" id="btn-export-md">Download Markdown (.md)</button>
+          <button class="btn-primary" id="btn-export-html">Download Report (.html)</button>
+        </div>
+      </div>
+
+      <div class="markdown-body" id="journey-doc-body">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- ES6 App Modules -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
