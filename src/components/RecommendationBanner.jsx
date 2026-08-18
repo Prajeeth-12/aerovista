@@ -23,95 +23,62 @@ export function RecommendationBanner({ recommendation }) {
   if (!recommendation) return null;
 
   const isLeft = recommendation.winner === 'left';
+  const color = isLeft ? 'var(--color-left)' : 'var(--color-right)';
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="relative rounded-[14px] overflow-hidden border border-[var(--color-border)] shadow-[var(--color-shadow)]"
+      className="card noise flex flex-col"
     >
-      {/* Diagonal split background */}
-      <div className="absolute inset-0">
-        <div
-          className="absolute inset-0"
-          style={{
-            background: isLeft
-              ? `linear-gradient(135deg, var(--color-left) 0%, var(--color-left) 48%, var(--color-right) 52%, var(--color-right) 100%)`
-              : `linear-gradient(135deg, var(--color-right) 0%, var(--color-right) 48%, var(--color-left) 52%, var(--color-left) 100%)`,
-            opacity: 0.08,
-          }}
-        />
-        <div className="absolute inset-0 bg-[var(--color-bg-elevated)] opacity-90" />
-      </div>
+      {/* Accent bar */}
+      <div className="h-[3px] w-full rounded-t-[14px]" style={{ background: color }} />
 
-      {/* Content */}
-      <div className="relative p-4 flex flex-col gap-3">
-        {/* Main recommendation */}
-        <div className="flex items-center gap-3">
-          {/* Confidence badge */}
-          <div
-            className="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 border"
-            style={{
-              borderColor: isLeft ? 'var(--color-left)' : 'var(--color-right)',
-              background: `color-mix(in srgb, ${isLeft ? 'var(--color-left)' : 'var(--color-right)'} 8%, transparent)`,
-            }}
-          >
-            <span
-              className="text-base font-bold font-[var(--font-mono)]"
-              style={{ color: isLeft ? 'var(--color-left)' : 'var(--color-right)' }}
-            >
-              {displayConfidence}%
+      {/* Recommendation */}
+      <div className="px-4 pt-3 pb-3 flex items-center gap-3">
+        <div
+          className="w-11 h-11 rounded-lg flex items-center justify-center flex-shrink-0"
+          style={{ background: `color-mix(in srgb, ${color} 10%, transparent)`, border: `1.5px solid color-mix(in srgb, ${color} 25%, transparent)` }}
+        >
+          <span className="text-[13px] font-bold font-[var(--font-mono)]" style={{ color }}>
+            {displayConfidence}%
+          </span>
+        </div>
+
+        <div className="flex flex-col gap-0.5 min-w-0">
+          <div className="flex items-center gap-1.5">
+            {isLeft ? <ArrowLeft size={14} style={{ color }} strokeWidth={2.5} /> : <ArrowRight size={14} style={{ color }} strokeWidth={2.5} />}
+            <span className="text-[15px] font-bold font-[var(--font-display)]" style={{ color }}>
+              Sit {recommendation.winner}
             </span>
           </div>
-
-          <div className="flex flex-col gap-0.5 min-w-0">
-            <div className="flex items-center gap-1.5">
-              {isLeft ? (
-                <ArrowLeft size={16} style={{ color: 'var(--color-left)' }} strokeWidth={2.5} />
-              ) : (
-                <ArrowRight size={16} style={{ color: 'var(--color-right)' }} strokeWidth={2.5} />
-              )}
-              <span
-                className="text-lg font-bold font-[var(--font-display)] tracking-tight"
-                style={{ color: isLeft ? 'var(--color-left)' : 'var(--color-right)' }}
-              >
-                Sit {recommendation.winner}
-              </span>
-            </div>
-            <p className="text-[11px] text-[var(--color-text-secondary)] leading-snug">
-              {recommendation.reasoning}
-            </p>
-          </div>
-        </div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-3 gap-2 pt-2.5 border-t border-[var(--color-border)]">
-          <Stat label="Distance" value={`${recommendation.distanceKm?.toLocaleString()} km`} mono />
-          <Stat label="Duration" value={`${recommendation.flightDurationHours}h`} mono />
-          <Stat label="Mode" value={recommendation.preference} />
+          <p className="text-[11px] text-[var(--color-text-secondary)] leading-relaxed">
+            {recommendation.reasoning}
+          </p>
         </div>
       </div>
 
-      {/* Accent bar on winning side */}
-      <div
-        className="absolute top-0 bottom-0 w-[3px]"
-        style={{
-          [isLeft ? 'left' : 'right']: 0,
-          background: isLeft ? 'var(--color-left)' : 'var(--color-right)',
-        }}
-      />
+      {/* Divider */}
+      <div className="mx-4 border-t border-[var(--color-border)]" />
+
+      {/* Stats */}
+      <div className="px-4 py-2.5 grid grid-cols-3">
+        <Stat label="Distance" value={`${recommendation.distanceKm?.toLocaleString()} km`} mono />
+        <Stat label="Duration" value={`${recommendation.flightDurationHours}h`} mono />
+        <Stat label="Mode" value={recommendation.preference} />
+      </div>
     </motion.div>
   );
 }
 
 function Stat({ label, value, mono }) {
   return (
-    <div className="text-center">
-      <div className="text-[10px] font-semibold text-[var(--color-text-muted)] uppercase tracking-wider">{label}</div>
-      <div className={`text-xs font-semibold text-[var(--color-text)] mt-0.5 capitalize ${mono ? 'font-[var(--font-mono)]' : ''}`}>
+    <div className="flex flex-col items-center gap-0.5">
+      <span className="text-[9px] font-semibold text-[var(--color-text-muted)] uppercase tracking-[0.08em]">{label}</span>
+      <span className={`text-[12px] font-semibold text-[var(--color-text)] capitalize ${mono ? 'font-[var(--font-mono)]' : ''}`}>
         {value}
-      </div>
+      </span>
     </div>
   );
 }

@@ -47,7 +47,7 @@ function App() {
 
       <div className="flex flex-1 gap-0 min-h-0 app-layout">
         {/* Sidebar */}
-        <aside className="w-[310px] flex-shrink-0 flex flex-col gap-2.5 overflow-y-auto p-2.5 border-r border-[var(--color-border)] bg-[var(--color-bg)] app-sidebar">
+        <aside className="w-[300px] flex-shrink-0 flex flex-col gap-2 overflow-y-auto p-2 border-r border-[var(--color-border)] bg-[var(--color-bg)] app-sidebar">
           <FlightConfigurator onCalculate={handleCalculate} />
           <SeatMap recommendation={flightData?.recommendation} />
           <RecommendationBanner recommendation={flightData?.recommendation} />

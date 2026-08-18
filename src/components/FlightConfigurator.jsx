@@ -28,9 +28,9 @@ export function FlightConfigurator({ onCalculate }) {
   const selectedRoute = ROUTES.find(r => r.id === routeId);
 
   return (
-    <div className="card noise p-5 flex flex-col gap-5">
-      {/* Route */}
-      <div className="flex flex-col gap-1.5">
+    <div className="card noise flex flex-col">
+      {/* Section: Route */}
+      <div className="px-4 pt-4 pb-3 flex flex-col gap-1.5">
         <label className="label">Route</label>
         <select
           className="select-input"
@@ -42,26 +42,32 @@ export function FlightConfigurator({ onCalculate }) {
           ))}
         </select>
         {selectedRoute && (
-          <span className="text-[11px] text-[var(--color-text-muted)] mt-0.5 pl-0.5">{selectedRoute.subtitle}</span>
+          <span className="text-[11px] text-[var(--color-text-muted)] leading-tight">{selectedRoute.subtitle}</span>
         )}
       </div>
 
-      {/* Departure time */}
-      <div className="flex flex-col gap-1.5">
-        <label className="label flex items-center gap-1">
-          <Clock size={10} />
+      {/* Divider */}
+      <div className="mx-4 border-t border-[var(--color-border)]" />
+
+      {/* Section: Time */}
+      <div className="px-4 py-3 flex flex-col gap-1.5">
+        <label className="label flex items-center gap-1.5">
+          <Clock size={10} className="opacity-60" />
           Departure (UTC)
         </label>
         <input
           type="time"
-          className="input font-[var(--font-mono)] text-sm"
+          className="input font-[var(--font-mono)] text-[13px]"
           value={time}
           onChange={(e) => setTime(e.target.value)}
         />
       </div>
 
-      {/* Preference */}
-      <div className="flex flex-col gap-2">
+      {/* Divider */}
+      <div className="mx-4 border-t border-[var(--color-border)]" />
+
+      {/* Section: Preference */}
+      <div className="px-4 py-3 flex flex-col gap-2">
         <label className="label">View preference</label>
         <div className="grid grid-cols-4 gap-1.5">
           {PREFERENCES.map(pref => {
@@ -71,13 +77,13 @@ export function FlightConfigurator({ onCalculate }) {
               <button
                 key={pref.id}
                 onClick={() => setPreference(pref.id)}
-                className={`flex flex-col items-center justify-center gap-1 py-2.5 rounded-lg text-[11px] font-medium cursor-pointer transition-all border ${
+                className={`flex flex-col items-center justify-center gap-1 py-2 rounded-lg text-[10px] font-semibold cursor-pointer transition-all border ${
                   isActive
                     ? 'border-[var(--color-accent)] bg-[var(--color-accent-subtle)] text-[var(--color-accent)]'
-                    : 'border-[var(--color-border)] text-[var(--color-text-muted)] hover:border-[var(--color-border-strong)] hover:bg-[var(--color-bg-inset)]'
+                    : 'border-[var(--color-border)] text-[var(--color-text-muted)] hover:border-[var(--color-border-strong)] hover:text-[var(--color-text-secondary)]'
                 }`}
               >
-                <Icon size={15} />
+                <Icon size={14} strokeWidth={isActive ? 2.5 : 2} />
                 {pref.label}
               </button>
             );
@@ -85,11 +91,13 @@ export function FlightConfigurator({ onCalculate }) {
         </div>
       </div>
 
-      {/* Analyze button */}
-      <button className="btn btn-primary w-full" onClick={handleCalculate}>
-        <Sparkles size={14} />
-        Analyze Flight
-      </button>
+      {/* Action */}
+      <div className="px-4 pb-4 pt-1">
+        <button className="btn btn-primary w-full" onClick={handleCalculate}>
+          <Sparkles size={14} />
+          Analyze Flight
+        </button>
+      </div>
     </div>
   );
 }
