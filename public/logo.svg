@@ -1,0 +1,22 @@
+<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg" fill="none">
+  <!-- Sun arc -->
+  <path d="M60 10 A35 35 0 0 1 95 45 H25 A35 35 0 0 1 60 10Z" fill="#F5920B"/>
+  <!-- Stars -->
+  <circle cx="50" cy="22" r="2" fill="white"/>
+  <circle cx="60" cy="18" r="2" fill="white"/>
+  <circle cx="70" cy="20" r="2" fill="white"/>
+  <circle cx="78" cy="26" r="1.5" fill="white"/>
+  <circle cx="42" cy="26" r="1.5" fill="white"/>
+  <!-- Cloud -->
+  <ellipse cx="55" cy="42" rx="14" ry="8" fill="white"/>
+  <ellipse cx="68" cy="44" rx="10" ry="6" fill="white"/>
+  <ellipse cx="44" cy="44" rx="8" ry="5" fill="white"/>
+  <!-- Plane body -->
+  <path d="M15 58 C15 58 25 48 50 46 L95 40 C100 39 105 40 108 42 C110 43 108 46 105 46 L88 48 L95 62 C96 64 95 66 93 66 L85 64 L78 52 L50 56 L45 68 C44 70 42 71 40 70 L35 67 L42 54 L20 60 L16 66 C15 67 13 67 12 66 L10 62 Z" fill="#2B3F9E"/>
+  <!-- Plane windows -->
+  <circle cx="72" cy="47" r="2" fill="white" opacity="0.8"/>
+  <circle cx="65" cy="48" r="1.5" fill="white" opacity="0.6"/>
+  <circle cx="59" cy="49" r="1.5" fill="white" opacity="0.6"/>
+  <!-- Engine -->
+  <ellipse cx="82" cy="54" rx="4" ry="3" fill="#1E2F7A"/>
+</svg>

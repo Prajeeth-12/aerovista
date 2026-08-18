@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ROUTES, AIRPORTS } from '../lib/airports';
-import { PlaneTakeoff, Clock, Sparkles, Sun, Sunset, Mountain, CloudOff } from 'lucide-react';
+import { Clock, Sparkles, Sun, Sunset, CloudOff } from 'lucide-react';
 
 const PREFERENCES = [
   { id: 'scenic', label: 'Scenic', icon: Sparkles },
@@ -28,13 +28,9 @@ export function FlightConfigurator({ onCalculate }) {
   const selectedRoute = ROUTES.find(r => r.id === routeId);
 
   return (
-    <div className="card noise p-4 flex flex-col gap-4">
-      <div className="flex items-center gap-2">
-        <PlaneTakeoff size={15} className="text-[var(--color-accent)]" />
-        <h2 className="text-sm font-semibold text-[var(--color-text)]">Flight Details</h2>
-      </div>
-
-      <div className="flex flex-col gap-1">
+    <div className="card noise p-5 flex flex-col gap-5">
+      {/* Route */}
+      <div className="flex flex-col gap-1.5">
         <label className="label">Route</label>
         <select
           className="select-input"
@@ -46,26 +42,28 @@ export function FlightConfigurator({ onCalculate }) {
           ))}
         </select>
         {selectedRoute && (
-          <span className="text-xs text-[var(--color-text-muted)] mt-0.5">{selectedRoute.subtitle}</span>
+          <span className="text-[11px] text-[var(--color-text-muted)] mt-0.5 pl-0.5">{selectedRoute.subtitle}</span>
         )}
       </div>
 
-      <div className="flex flex-col gap-1">
+      {/* Departure time */}
+      <div className="flex flex-col gap-1.5">
         <label className="label flex items-center gap-1">
-          <Clock size={11} />
+          <Clock size={10} />
           Departure (UTC)
         </label>
         <input
           type="time"
-          className="input font-[var(--font-mono)]"
+          className="input font-[var(--font-mono)] text-sm"
           value={time}
           onChange={(e) => setTime(e.target.value)}
         />
       </div>
 
-      <div className="flex flex-col gap-1.5">
+      {/* Preference */}
+      <div className="flex flex-col gap-2">
         <label className="label">View preference</label>
-        <div className="grid grid-cols-4 gap-1">
+        <div className="grid grid-cols-4 gap-1.5">
           {PREFERENCES.map(pref => {
             const Icon = pref.icon;
             const isActive = preference === pref.id;
@@ -73,13 +71,13 @@ export function FlightConfigurator({ onCalculate }) {
               <button
                 key={pref.id}
                 onClick={() => setPreference(pref.id)}
-                className={`flex flex-col items-center gap-1 py-2 rounded-md text-[11px] font-medium cursor-pointer transition-all border ${
+                className={`flex flex-col items-center justify-center gap-1 py-2.5 rounded-lg text-[11px] font-medium cursor-pointer transition-all border ${
                   isActive
                     ? 'border-[var(--color-accent)] bg-[var(--color-accent-subtle)] text-[var(--color-accent)]'
-                    : 'border-transparent text-[var(--color-text-muted)] hover:bg-[var(--color-bg-inset)]'
+                    : 'border-[var(--color-border)] text-[var(--color-text-muted)] hover:border-[var(--color-border-strong)] hover:bg-[var(--color-bg-inset)]'
                 }`}
               >
-                <Icon size={14} />
+                <Icon size={15} />
                 {pref.label}
               </button>
             );
@@ -87,7 +85,8 @@ export function FlightConfigurator({ onCalculate }) {
         </div>
       </div>
 
-      <button className="btn btn-primary w-full mt-1" onClick={handleCalculate}>
+      {/* Analyze button */}
+      <button className="btn btn-primary w-full" onClick={handleCalculate}>
         <Sparkles size={14} />
         Analyze Flight
       </button>

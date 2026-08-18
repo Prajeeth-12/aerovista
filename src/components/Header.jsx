@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Plane, Map, Clock, BookOpen, Sun, Moon } from 'lucide-react';
+import { Map, Clock, BookOpen, Sun, Moon } from 'lucide-react';
 
 const TABS = [
   { id: 'map', label: 'Map', icon: Map },
@@ -10,20 +10,18 @@ const TABS = [
 
 export function Header({ activeTab, onTabChange, isDark, onToggleTheme }) {
   return (
-    <header className="relative z-10 flex items-center justify-between px-5 py-2.5 bg-[var(--color-bg-elevated)] border-b border-[var(--color-border)]">
-      <div className="flex items-center gap-6">
-        {/* Logo */}
-        <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-md bg-[var(--color-accent)] flex items-center justify-center shadow-[0_2px_8px_color-mix(in_srgb,var(--color-accent)_25%,transparent)]">
-            <Plane className="text-white" size={14} strokeWidth={2.5} />
-          </div>
-          <span className="text-[15px] font-semibold font-[var(--font-display)] tracking-tight text-[var(--color-text)]">
+    <header className="relative z-10 flex items-center justify-between px-4 py-2 bg-[var(--color-bg-elevated)] border-b border-[var(--color-border)]">
+      <div className="flex items-center gap-5">
+        {/* Custom logo */}
+        <div className="flex items-center gap-2">
+          <img src="/logo.svg" alt="AeroVista" className="h-8 w-auto" />
+          <span className="text-[15px] font-bold font-[var(--font-display)] tracking-tight text-[var(--color-text)]">
             AeroVista
           </span>
         </div>
 
-        {/* Tabs with animated underline */}
-        <nav className="flex items-center gap-1">
+        {/* Tabs */}
+        <nav className="flex items-center">
           {TABS.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -52,7 +50,6 @@ export function Header({ activeTab, onTabChange, isDark, onToggleTheme }) {
         </nav>
       </div>
 
-      {/* Theme toggle */}
       <button
         onClick={onToggleTheme}
         className="w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer hover:bg-[var(--color-bg-inset)] transition-colors"
