@@ -77,7 +77,7 @@ export function MapVisualizer({ waypoints, recommendation, isDark }) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.4 }}
-      className="relative flex-1 rounded-xl overflow-hidden border border-[var(--color-border)]"
+      className="relative flex-1 rounded-xl overflow-hidden border border-[var(--color-border)] noise"
     >
       <MapContainer
         center={defaultCenter}

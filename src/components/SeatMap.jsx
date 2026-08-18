@@ -7,7 +7,7 @@ export function SeatMap({ recommendation }) {
   const winner = recommendation?.winner;
 
   return (
-    <div className="card p-4 flex flex-col gap-3">
+    <div className="card noise p-4 flex flex-col gap-3">
       <h3 className="text-sm font-semibold text-[var(--color-text)]">Cabin View</h3>
 
       {!recommendation ? (
